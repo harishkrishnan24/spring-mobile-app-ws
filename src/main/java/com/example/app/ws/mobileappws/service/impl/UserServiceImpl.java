@@ -1,6 +1,6 @@
 package com.example.app.ws.mobileappws.service.impl;
 
-import com.example.app.ws.mobileappws.UserRepository;
+import com.example.app.ws.mobileappws.io.repositories.UserRepository;
 import com.example.app.ws.mobileappws.io.entity.UserEntity;
 import com.example.app.ws.mobileappws.service.UserService;
 import com.example.app.ws.mobileappws.shared.Utils;
@@ -56,5 +56,16 @@ public class UserServiceImpl implements UserService {
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+    }
+
+    @Override
+    public UserDto getUser(String email) {
+        UserEntity userEntity =  userRepository.findByEmail(email);
+        if (userEntity == null) throw new UsernameNotFoundException(email);
+
+        UserDto returnValue = new UserDto();
+        BeanUtils.copyProperties(userEntity, returnValue);
+
+        return returnValue;
     }
 }
