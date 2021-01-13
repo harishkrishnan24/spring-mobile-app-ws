@@ -6,6 +6,7 @@ import com.example.app.ws.mobileappws.ui.model.request.UserDetailsRequestModel;
 import com.example.app.ws.mobileappws.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,13 +16,20 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping
-    public String getUser() {
-        return "get user was called";
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public UserRest getUser(@PathVariable String id) {
+        UserRest returnValue = new UserRest();
+
+        UserDto userDto = userService.getUserByUserId(id);
+        BeanUtils.copyProperties(userDto, returnValue);
+
+        return returnValue;
     }
 
-    @PostMapping
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
+    @PostMapping(
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
         UserRest returnValue = new UserRest();
 
         UserDto userDto = new UserDto();
